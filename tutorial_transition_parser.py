@@ -113,6 +113,7 @@ class TransitionParser:
         logits = W_act * h + b_act
         log_probs = dy.log_softmax(logits, valid_actions)
         if oracle_actions is None:
+          print('no oracle!')
           action = max(enumerate(log_probs.vec_value()), key=itemgetter(1))[0]
       if oracle_actions is not None:
         action = oracle_actions.pop()
@@ -150,15 +151,19 @@ vocab_acts = Vocab.from_list(acts)
 
 vocab_words = Vocab.from_file('data/vocab.txt')
 train = list(read_oracle('data/small-train.unk.txt', vocab_words, vocab_acts))
-dev = list(read_oracle('data/small-dev.unk.txt', vocab_words, vocab_acts))
+dev = list(read_oracle('data/small-test.unk.txt', vocab_words, vocab_acts))
 
 model = dy.Model()
 trainer = dy.AdamTrainer(model)
 
 tp = TransitionParser(model, vocab_words)
 
+#cmake .. -DEIGEN3_INCLUDE_DIR=/Users/flo/Documents/Doctorat/AMR/dynet-base/eigen -DBOOST_ROOT=/usr/local/opt/boost160/ -DPYTHON=/usr/bin/python
 i = 0
-for epoch in range(5):
+min_loss = 100
+rounds = 0
+min_epoch = 0
+for epoch in range(10):
   words = 0
   total_loss = 0.0
   for (s,a) in train:
@@ -170,11 +175,11 @@ for epoch in range(5):
       trainer.update()
     e = float(i) / len(train)
     if i % 50 == 0:
-      print('epoch {}: per-word loss: {}'.format(e, total_loss / words))
+      # print('epoch {}: per-word loss: {}'.format(e, total_loss / words))
       words = 0
       total_loss = 0.0
     if i % 500 == 0:
-      tp.parse(dev[209][0])
+      # tp.parse(dev[209][0])
       dev_words = 0
       dev_loss = 0.0
       for (ds, da) in dev:
@@ -182,5 +187,13 @@ for epoch in range(5):
         dev_words += len(ds)
         if loss is not None:
           dev_loss += loss.scalar_value()
-      print('[validation] epoch {}: per-word loss: {}'.format(e, dev_loss / dev_words))
+      loss_dev_words = dev_loss / dev_words
+      print('[validation] epoch {}: per-word loss: {}'.format(e, loss_dev_words))
+      min_loss = min(min_loss, loss_dev_words)
+      if min_loss == loss_dev_words:
+        rounds = 0
+        min_epoch = e
+      else:
+        rounds += 1
+      print("since {} min loss {} for {} rounds.".format(min_epoch, min_loss, rounds))
     i += 1
