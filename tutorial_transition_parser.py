@@ -11,7 +11,8 @@ import re
 SHIFT = 0
 REDUCE_L = 1
 REDUCE_R = 2
-NUM_ACTIONS = 3
+DELETE = 3
+NUM_ACTIONS = 4
 
 class Vocab:
   def __init__(self, w2i):
@@ -98,6 +99,8 @@ class TransitionParser:
       valid_actions = []
       if len(buffer) > 0:  # can only reduce if elements in buffer
         valid_actions += [SHIFT]
+      if len(stack) >= 1:
+        valid_actions += [DELETE]
       if len(stack) >= 2:  # can only shift if 2 elements on stack
         valid_actions += [REDUCE_L, REDUCE_R]
 
@@ -120,13 +123,14 @@ class TransitionParser:
         if log_probs is not None:
           # append the action-specific loss
           losses.append(dy.pick(log_probs, action))
-
       # execute the action to update the parser state
       if action == SHIFT:
         _, tok_embedding, token = buffer.pop()
         stack_state, _ = stack[-1] if stack else (stack_top, '<TOP>')
         stack_state = stack_state.add_input(tok_embedding)
         stack.append((stack_state, token))
+      elif action == DELETE:
+        stack.pop()
       else: # one of the reduce actions
         right = stack.pop()
         left = stack.pop()
@@ -146,12 +150,12 @@ class TransitionParser:
       print('ROOT --> {0}'.format(head))
     return -dy.esum(losses) if losses else None
 
-acts = ['SHIFT', 'REDUCE_L', 'REDUCE_R']
+acts = ['SHIFT', 'REDUCE_L', 'REDUCE_R', 'DELETE']
 vocab_acts = Vocab.from_list(acts)
 
 vocab_words = Vocab.from_file('data/vocab.txt')
-train = list(read_oracle('data/small-train.unk.txt', vocab_words, vocab_acts))
-dev = list(read_oracle('data/small-test.unk.txt', vocab_words, vocab_acts))
+train = list(read_oracle('data/amr-examples.txt', vocab_words, vocab_acts))
+dev = list(read_oracle('data/amr-examples-test.txt', vocab_words, vocab_acts))
 
 model = dy.Model()
 trainer = dy.AdamTrainer(model)
@@ -163,7 +167,7 @@ i = 0
 min_loss = 100
 rounds = 0
 min_epoch = 0
-for epoch in range(10):
+for epoch in range(100):
   words = 0
   total_loss = 0.0
   for (s,a) in train:
@@ -178,22 +182,20 @@ for epoch in range(10):
       # print('epoch {}: per-word loss: {}'.format(e, total_loss / words))
       words = 0
       total_loss = 0.0
-    if i % 500 == 0:
-      # tp.parse(dev[209][0])
-      dev_words = 0
-      dev_loss = 0.0
-      for (ds, da) in dev:
-        loss = tp.parse(ds, da)
-        dev_words += len(ds)
-        if loss is not None:
-          dev_loss += loss.scalar_value()
-      loss_dev_words = dev_loss / dev_words
-      print('[validation] epoch {}: per-word loss: {}'.format(e, loss_dev_words))
-      min_loss = min(min_loss, loss_dev_words)
-      if min_loss == loss_dev_words:
-        rounds = 0
-        min_epoch = e
-      else:
-        rounds += 1
-      print("since {} min loss {} for {} rounds.".format(min_epoch, min_loss, rounds))
     i += 1
+  dev_words = 0
+  dev_loss = 0.0
+  for (ds, da) in dev:
+    loss = tp.parse(ds, da)
+    dev_words += len(ds)
+    if loss is not None:
+      dev_loss += loss.scalar_value()
+  loss_dev_words = dev_loss / dev_words
+  print('[validation] epoch {}: per-word loss: {}'.format(e, loss_dev_words))
+  min_loss = min(min_loss, loss_dev_words)
+  if min_loss == loss_dev_words:
+    rounds = 0
+    min_epoch = e
+  else:
+    rounds += 1
+  print("since {} min loss {} for {} rounds.".format(min_epoch, min_loss, rounds))
