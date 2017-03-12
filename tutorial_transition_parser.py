@@ -236,7 +236,6 @@ for epoch in range(100):
       total_loss += loss.scalar_value()
       loss.backward()
       trainer.update()
-    e = float(i) / len(train)
     if i % 50 == 0:
       # print('epoch {}: per-word loss: {}'.format(e, total_loss / words))
       words = 0
@@ -251,11 +250,11 @@ for epoch in range(100):
       # print("loss" + str(loss) + "scalar" + str(loss.scalar_value()))
       dev_loss += loss.scalar_value()
   loss_dev_words = dev_loss / dev_words
-  print('[validation] epoch {}: per-word loss: {}'.format(e, loss_dev_words))
+  print('[validation] epoch {}: per-word loss: {}'.format(epoch, loss_dev_words))
   min_loss = min(min_loss, loss_dev_words)
   if min_loss == loss_dev_words:
     rounds = 0
-    min_epoch = e
+    min_epoch = epoch
   else:
     rounds += 1
   print("since {} min loss {} for {} rounds.".format(min_epoch, min_loss, rounds))
