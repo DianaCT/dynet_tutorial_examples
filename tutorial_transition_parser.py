@@ -12,7 +12,8 @@ SH = 0
 RL = 1
 RR = 2
 DN = 3
-NUM_ACTIONS = 4
+SW = 4
+NUM_ACTIONS = 5
 
 class Vocab:
   def __init__(self, w2i):
@@ -146,6 +147,8 @@ class TransitionParser:
         valid_actions += [DN]
       if len(stack) >= 2:  # can only shift if 2 elements on stack
         valid_actions += [RL, RR]
+      if len(stack) >= 3:
+        valid_actions += [SW] # can only swap if we have at least 3 elements on the stack
 
       # compute probability of each of the actions and choose an action
       # either from the oracle or if there is no oracle, based on the model
@@ -177,6 +180,13 @@ class TransitionParser:
         stack.append((stack_state, Node(label, token)))
       elif action == DN:
         buffer.pop()
+      elif action == SW:
+        top = stack.pop()
+        mid = stack.pop()
+        lower = stack.pop()
+        stack.append(mid)
+        stack.append(lower)
+        stack.append(top)
       else: # one of the reduce actions
         right = stack.pop()
         left = stack.pop()
@@ -199,7 +209,7 @@ class TransitionParser:
     # print(head.preety_print())
     return (-dy.esum(losses) if losses else None, head)
 
-acts = ['SH', 'RL', 'RR', 'DN']
+acts = ['SH', 'RL', 'RR', 'DN', 'SW']
 vocab_acts = Vocab.from_list(acts)
 
 vocab_words = Vocab.from_file('data/vocab.txt')
