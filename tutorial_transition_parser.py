@@ -176,7 +176,7 @@ class TransitionParser:
         stack_state = stack_state.add_input(tok_embedding)
         stack.append((stack_state, Node(label, token)))
       elif action == DN:
-        stack.pop()
+        buffer.pop()
       else: # one of the reduce actions
         right = stack.pop()
         left = stack.pop()

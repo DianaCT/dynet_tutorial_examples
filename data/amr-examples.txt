@@ -1,9 +1,9 @@
-The boy desires to be believed by the girl ||| SH DN SH SH RL SH DN SH DN SH SH DN SH DN SH RR RR
-The police wants to arrest Michael_Karras in Singapore ||| SH DN SH SH RL SH DN SH SH RR SH DN SH RR RR
-Meeting violence with violence does not benefit anyone ||| SH SH RR SH DN SH RR SH DN SH SH RL RL SH RR
-It is extremely troublesome to get there via land ||| SH DN SH DN SH SH RL SH DN SH SH RR SH DN SH RR RR
+The boy desires to be believed by the girl ||| DN SH SH RL DN DN SH DN DN SH RR RR
+The police wants to arrest Michael_Karras in Singapore ||| DN SH SH RL DN SH SH RR DN SH RR RR
+Meeting violence with violence does not benefit anyone ||| SH SH RR DN SH RR DN SH SH RL RL SH RR
+It is extremely troublesome to get there via land ||| DN DN SH SH RL DN SH SH RR DN SH RR RR
 This dynamic metropolis not ever ceases its movement ||| SH SH SH RL RL SH SH SH RL RL RL SH SH RL RR
-The boy wants to eat an apple ||| SH DN SH SH RL SH DN SH SH DN SH RR RR
-I ate pasta with a fork ||| SH SH RL SH RR SH DN SH DN SH RR
-The game continued despite of the rain |||  SH DN SH SH RL SH DN SH DN SH DN SH RR
-Since then , this area has become a prohibited zone in HongKong . ||| ['SH_since', 'SH_then', 'RR_op1', 'SH', 'DN', 'SH_this', 'SH_area', 'RL_mod', 'SH', 'DN', 'SH_become-01', 'RL_ARG1', 'RL_time', 'SH', 'DN', 'SH_prohibit-01', 'SH_zone', 'RL_ARG1-of', 'SH', 'DN', 'SH_city', 'RR_part-of', 'RR_ARG2', 'SH', 'DN']
+The boy wants to eat an apple ||| DN SH SH RL DN SH DN SH RR RR
+I ate pasta with a fork ||| SH SH RL SH RR DN DN SH RR
+The game continued despite of the rain |||  DN SH SH RL DN DN DN SH RR
+Since then , this area has become a prohibited zone in HongKong . ||| ['SH_since', 'SH_then', 'RR_op1', 'DN', 'SH_this', 'SH_area', 'RL_mod', 'DN', 'SH_become-01', 'RL_ARG1', 'RL_time', 'DN', 'SH_prohibit-01', 'SH_zone', 'RL_ARG1-of', 'DN', 'SH_city', 'RR_part-of', 'RR_ARG2', 'DN']
