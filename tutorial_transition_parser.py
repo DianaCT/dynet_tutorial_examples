@@ -1,10 +1,6 @@
 from __future__ import print_function
 from operator import itemgetter
-from itertools import count
-from collections import Counter, defaultdict
-import random
 import dynet as dy
-import numpy as np
 import re
 
 # actions the parser can take
@@ -38,6 +34,15 @@ class Vocab:
     return Vocab.from_list(words)
 
   def size(self): return len(self.w2i.keys())
+
+  def get_index_or_add(self, word):
+    if not word in self.w2i.keys():
+      idx = self.size()
+      self.w2i[word] = idx
+      self.i2w[idx] = word
+      return idx
+    else:
+      return self.w2i[word]
 
 
 class AMRAction:
@@ -78,7 +83,7 @@ def read_oracle(fname, vw, va):
     for line in fh:
       line = line.strip()
       ssent, sacts = re.split(r' \|\|\| ', line)
-      sent = [vw.w2i[x] for x in ssent.split()]
+      sent = [vw.get_index_or_add(x) for x in ssent.split()]
       acts = read_actions(sacts, va)
       yield (sent, acts)
 
@@ -207,7 +212,7 @@ class TransitionParser:
       print('ROOT --> {0}'.format(head))
     # print("losses" + str(map(lambda x: x.scalar_value(), losses)))
     # print(head.preety_print())
-    return (-dy.esum(losses) if losses else None, head)
+    return -dy.esum(losses) if losses else None, head
 
 acts = ['SH', 'RL', 'RR', 'DN', 'SW']
 vocab_acts = Vocab.from_list(acts)
