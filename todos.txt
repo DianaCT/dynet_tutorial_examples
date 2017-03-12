@@ -1,0 +1,17 @@
+
+
+
+
+Todo list
+
+- add all the examples we parsed and split them between test & train
+- propose a way to handle the "sense detection"
+-- add examlples from XML
+- see how we can preprocess for sub-trees
+
+
+- early stopping  (caffe, keras)
+
+
+
+The boy desire-01 to be believed by the girl ||| SHIFT DELETE SHIFT(?discover"sense") SHIFT REDUCE_L(label) SHIFT DELETE SHIFT DELETE SHIFT SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R REDUCE_R
