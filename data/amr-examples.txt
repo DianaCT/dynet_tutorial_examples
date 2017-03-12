@@ -1,9 +1,9 @@
-The boy desires to be believed by the girl ||| SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT DELETE SHIFT SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R REDUCE_R
-The police wants to arrest Michael_Karras in Singapore ||| SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT SHIFT REDUCE_R SHIFT DELETE SHIFT REDUCE_R REDUCE_R
-Meeting violence with violence does not benefit anyone ||| SHIFT SHIFT REDUCE_R SHIFT DELETE SHIFT REDUCE_R SHIFT DELETE SHIFT SHIFT REDUCE_L REDUCE_L SHIFT REDUCE_R
-It is extremely troublesome to get there via land ||| SHIFT DELETE SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT SHIFT REDUCE_R SHIFT DELETE SHIFT REDUCE_R REDUCE_R
-This dynamic metropolis not ever ceases its movement ||| SHIFT SHIFT SHIFT REDUCE_L REDUCE_L SHIFT SHIFT SHIFT REDUCE_L REDUCE_L REDUCE_L SHIFT SHIFT REDUCE_L REDUCE_R
-The boy wants to eat an apple ||| SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT SHIFT DELETE SHIFT REDUCE_R REDUCE_R
-I ate pasta with a fork ||| SHIFT SHIFT REDUCE_L SHIFT REDUCE_R SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R
-The game continued despite of the rain |||  SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R
+The boy desires to be believed by the girl ||| SHIFT DELETE SHIFT SHIFT RL SHIFT DELETE SHIFT DELETE SHIFT SHIFT DELETE SHIFT DELETE SHIFT RR RR
+The police wants to arrest Michael_Karras in Singapore ||| SHIFT DELETE SHIFT SHIFT RL SHIFT DELETE SHIFT SHIFT RR SHIFT DELETE SHIFT RR RR
+Meeting violence with violence does not benefit anyone ||| SHIFT SHIFT RR SHIFT DELETE SHIFT RR SHIFT DELETE SHIFT SHIFT RL RL SHIFT RR
+It is extremely troublesome to get there via land ||| SHIFT DELETE SHIFT DELETE SHIFT SHIFT RL SHIFT DELETE SHIFT SHIFT RR SHIFT DELETE SHIFT RR RR
+This dynamic metropolis not ever ceases its movement ||| SHIFT SHIFT SHIFT RL RL SHIFT SHIFT SHIFT RL RL RL SHIFT SHIFT RL RR
+The boy wants to eat an apple ||| SHIFT DELETE SHIFT SHIFT RL SHIFT DELETE SHIFT SHIFT DELETE SHIFT RR RR
+I ate pasta with a fork ||| SHIFT SHIFT RL SHIFT RR SHIFT DELETE SHIFT DELETE SHIFT RR
+The game continued despite of the rain |||  SHIFT DELETE SHIFT SHIFT RL SHIFT DELETE SHIFT DELETE SHIFT DELETE SHIFT RR
 Since then , this area has become a prohibited zone in HongKong . ||| ['SH_since', 'SH_then', 'RR_op1', 'SH', 'DN', 'SH_this', 'SH_area', 'RL_mod', 'SH', 'DN', 'SH_become-01', 'RL_ARG1', 'RL_time', 'SH', 'DN', 'SH_prohibit-01', 'SH_zone', 'RL_ARG1-of', 'SH', 'DN', 'SH_city', 'RR_part-of', 'RR_ARG2', 'SH', 'DN']

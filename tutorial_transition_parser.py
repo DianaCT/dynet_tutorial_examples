@@ -9,8 +9,8 @@ import re
 
 # actions the parser can take
 SHIFT = 0
-REDUCE_L = 1
-REDUCE_R = 2
+RL = 1
+RR = 2
 DELETE = 3
 NUM_ACTIONS = 4
 
@@ -49,8 +49,8 @@ class AMRAction:
 
   converted_actions = {
     'SH': 'SHIFT',
-    'RL': 'REDUCE_L',
-    'RR': 'REDUCE_R',
+    'RL': 'RL',
+    'RR': 'RR',
     'DN': 'DELETE'
   }
 
@@ -76,12 +76,12 @@ def read_oracle(fname, vw, va):
 
 def read_actions(sacts, va):
   if('SHIFT' in sacts):
-    return [va.w2i[x] for x in sacts.split()]
+    actions = sacts.split()
   else:
     # actions format: ['SH_label', 'RL_label', 'RR_label', 'DN']
     actions = sacts[2:-2].split('\', \'')
-    parser_actions = [AMRAction.from_oracle(x, va) for x in actions]
-    return [i.index for i in parser_actions]
+  parser_actions = [AMRAction.from_oracle(x, va) for x in actions]
+  return [i.index for i in parser_actions]
 
 WORD_DIM = 64
 LSTM_DIM = 64
@@ -138,7 +138,7 @@ class TransitionParser:
       if len(stack) >= 1:
         valid_actions += [DELETE]
       if len(stack) >= 2:  # can only shift if 2 elements on stack
-        valid_actions += [REDUCE_L, REDUCE_R]
+        valid_actions += [RL, RR]
 
       # compute probability of each of the actions and choose an action
       # either from the oracle or if there is no oracle, based on the model
@@ -170,7 +170,7 @@ class TransitionParser:
       else: # one of the reduce actions
         right = stack.pop()
         left = stack.pop()
-        head, modifier = (left, right) if action == REDUCE_R else (right, left)
+        head, modifier = (left, right) if action == RR else (right, left)
         top_stack_state, _ = stack[-1] if stack else (stack_top, '<TOP>')
         head_rep, head_tok = head[0].output(), head[1]
         mod_rep, mod_tok = modifier[0].output(), modifier[1]
@@ -187,7 +187,7 @@ class TransitionParser:
     # print("losses" + str(map(lambda x: x.scalar_value(), losses)))
     return -dy.esum(losses) if losses else None
 
-acts = ['SHIFT', 'REDUCE_L', 'REDUCE_R', 'DELETE']
+acts = ['SHIFT', 'RL', 'RR', 'DELETE']
 vocab_acts = Vocab.from_list(acts)
 
 vocab_words = Vocab.from_file('data/vocab.txt')
