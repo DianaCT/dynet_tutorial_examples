@@ -148,6 +148,7 @@ class TransitionParser:
     if oracle_actions is None:
       head = stack.pop()[1]
       print('ROOT --> {0}'.format(head))
+    # print("losses" + str(map(lambda x: x.scalar_value(), losses)))
     return -dy.esum(losses) if losses else None
 
 acts = ['SHIFT', 'REDUCE_L', 'REDUCE_R', 'DELETE']
@@ -189,6 +190,7 @@ for epoch in range(100):
     loss = tp.parse(ds, da)
     dev_words += len(ds)
     if loss is not None:
+      # print("loss" + str(loss) + "scalar" + str(loss.scalar_value()))
       dev_loss += loss.scalar_value()
   loss_dev_words = dev_loss / dev_words
   print('[validation] epoch {}: per-word loss: {}'.format(e, loss_dev_words))
