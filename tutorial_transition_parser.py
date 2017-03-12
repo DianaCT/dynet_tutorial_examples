@@ -8,10 +8,10 @@ import numpy as np
 import re
 
 # actions the parser can take
-SHIFT = 0
+SH = 0
 RL = 1
 RR = 2
-DELETE = 3
+DN = 3
 NUM_ACTIONS = 4
 
 class Vocab:
@@ -47,19 +47,10 @@ class AMRAction:
   def __repr__(self):
     return "action: %s label: %s index: %s" % (self.action, self.label, self.index)
 
-  converted_actions = {
-    'SH': 'SHIFT',
-    'RL': 'RL',
-    'RR': 'RR',
-    'DN': 'DELETE'
-  }
-
   @classmethod
   def from_oracle(cls, labeled_action, va):
     split_action = labeled_action.split("_")
     action = split_action[0]
-    if action in cls.converted_actions.keys():
-      action = cls.converted_actions[action]
     label = None
     if len(split_action) == 2:
       label = split_action[1]
@@ -75,11 +66,11 @@ def read_oracle(fname, vw, va):
       yield (sent, acts)
 
 def read_actions(sacts, va):
-  if('SHIFT' in sacts):
-    actions = sacts.split()
-  else:
+  if('\'' in sacts):
     # actions format: ['SH_label', 'RL_label', 'RR_label', 'DN']
     actions = sacts[2:-2].split('\', \'')
+  else:
+    actions = sacts.split()
   parser_actions = [AMRAction.from_oracle(x, va) for x in actions]
   return [i.index for i in parser_actions]
 
@@ -134,9 +125,9 @@ class TransitionParser:
       # based on parser state, get valid actions
       valid_actions = []
       if len(buffer) > 0:  # can only reduce if elements in buffer
-        valid_actions += [SHIFT]
+        valid_actions += [SH]
       if len(stack) >= 1:
-        valid_actions += [DELETE]
+        valid_actions += [DN]
       if len(stack) >= 2:  # can only shift if 2 elements on stack
         valid_actions += [RL, RR]
 
@@ -160,12 +151,12 @@ class TransitionParser:
           # append the action-specific loss
           losses.append(dy.pick(log_probs, action))
       # execute the action to update the parser state
-      if action == SHIFT:
+      if action == SH:
         _, tok_embedding, token = buffer.pop()
         stack_state, _ = stack[-1] if stack else (stack_top, '<TOP>')
         stack_state = stack_state.add_input(tok_embedding)
         stack.append((stack_state, token))
-      elif action == DELETE:
+      elif action == DN:
         stack.pop()
       else: # one of the reduce actions
         right = stack.pop()
@@ -187,7 +178,7 @@ class TransitionParser:
     # print("losses" + str(map(lambda x: x.scalar_value(), losses)))
     return -dy.esum(losses) if losses else None
 
-acts = ['SHIFT', 'RL', 'RR', 'DELETE']
+acts = ['SH', 'RL', 'RR', 'DN']
 vocab_acts = Vocab.from_list(acts)
 
 vocab_words = Vocab.from_file('data/vocab.txt')

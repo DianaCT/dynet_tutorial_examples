@@ -1,2 +1,2 @@
-The boy wants the cake ||| SHIFT DELETE SHIFT SHIFT RL SHIFT DELETE SHIFT RR
-The boy thinks his team wont win ||| SHIFT DELETE SHIFT SHIFT RL SHIFT SHIFT RL SHIFT SHIFT RL RR RR
+The boy wants the cake ||| SH DN SH SH RL SH DN SH RR
+The boy thinks his team wont win ||| SH DN SH SH RL SH SH RL SH SH RL RR RR
