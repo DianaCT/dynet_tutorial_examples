@@ -38,14 +38,50 @@ class Vocab:
 
   def size(self): return len(self.w2i.keys())
 
+
+class AMRAction:
+  def __init__(self, action, label, index):
+    self.action = action
+    self.label = label
+    self.index = index
+  def __repr__(self):
+    return "action: %s label: %s index: %s" % (self.action, self.label, self.index)
+
+  converted_actions = {
+    'SH': 'SHIFT',
+    'RL': 'REDUCE_L',
+    'RR': 'REDUCE_R',
+    'DN': 'DELETE'
+  }
+
+  @classmethod
+  def from_oracle(cls, labeled_action, va):
+    split_action = labeled_action.split("_")
+    action = split_action[0]
+    if action in cls.converted_actions.keys():
+      action = cls.converted_actions[action]
+    label = None
+    if len(split_action) == 2:
+      label = split_action[1]
+    return AMRAction(action, label, va.w2i[action])
+
 def read_oracle(fname, vw, va):
   with file(fname) as fh:
     for line in fh:
       line = line.strip()
       ssent, sacts = re.split(r' \|\|\| ', line)
       sent = [vw.w2i[x] for x in ssent.split()]
-      acts = [va.w2i[x] for x in sacts.split()]
+      acts = read_actions(sacts, va)
       yield (sent, acts)
+
+def read_actions(sacts, va):
+  if('SHIFT' in sacts):
+    return [va.w2i[x] for x in sacts.split()]
+  else:
+    # actions format: ['SH_label', 'RL_label', 'RR_label', 'DN']
+    actions = sacts[2:-2].split('\', \'')
+    parser_actions = [AMRAction.from_oracle(x, va) for x in actions]
+    return [i.index for i in parser_actions]
 
 WORD_DIM = 64
 LSTM_DIM = 64

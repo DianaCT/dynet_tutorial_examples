@@ -6,4 +6,4 @@ This dynamic metropolis not ever ceases its movement ||| SHIFT SHIFT SHIFT REDUC
 The boy wants to eat an apple ||| SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT SHIFT DELETE SHIFT REDUCE_R REDUCE_R
 I ate pasta with a fork ||| SHIFT SHIFT REDUCE_L SHIFT REDUCE_R SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R
 The game continued despite of the rain |||  SHIFT DELETE SHIFT SHIFT REDUCE_L SHIFT DELETE SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R
-Since then , this area has become a prohibited zone in Hong Kong . ||| SH_since', 'SH_then', 'RR_op1', 'DN', 'SH_this', 'SH_area', 'RL_mod', 'DN', 'SH_become-01', 'RL_ARG1', 'RL_time', 'DN', 'SH_prohibit-01', 'SH_zone', 'RL_ARG1-of', 'DN', 'SH_city', 'RR_part-of', 'RR_ARG2', 'DN
+Since then , this area has become a prohibited zone in HongKong . ||| ['SH_since', 'SH_then', 'RR_op1', 'SH', 'DN', 'SH_this', 'SH_area', 'RL_mod', 'SH', 'DN', 'SH_become-01', 'RL_ARG1', 'RL_time', 'SH', 'DN', 'SH_prohibit-01', 'SH_zone', 'RL_ARG1-of', 'SH', 'DN', 'SH_city', 'RR_part-of', 'RR_ARG2', 'SH', 'DN']

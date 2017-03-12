@@ -12,6 +12,9 @@ Todo list
 
 - early stopping  (caffe, keras)
 
-
+-- Think of a case of "bad prediction" and what would be the outcome ?
+--- can be handled by attaching the label to the predicted action
+-- delete from stack
+-- compound words?
 
 The boy desire-01 to be believed by the girl ||| SHIFT DELETE SHIFT(?discover"sense") SHIFT REDUCE_L(label) SHIFT DELETE SHIFT DELETE SHIFT SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R REDUCE_R
