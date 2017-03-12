@@ -56,6 +56,22 @@ class AMRAction:
       label = split_action[1]
     return AMRAction(action, label, va.w2i[action])
 
+class Node():
+    def __init__(self, label, token):
+        self.label = label
+        self.token = token
+        self.children = []
+
+    def add_child(self, obj, relation):
+        self.children.append((obj, relation))
+    def preety_print(self, depth = 1):
+      str = "( %s orig: %s" % ( self.label, self.token);
+      str += "".join(("\n".ljust(depth+1, "\t") + "%s  %s" % (relation, child.preety_print(depth + 1))) for (child, relation) in self.children)
+      if(self.children):
+        str += "\n".ljust(depth, "\t")
+      str += ")"
+      return str;
+
 def read_oracle(fname, vw, va):
   with file(fname) as fh:
     for line in fh:
@@ -72,7 +88,7 @@ def read_actions(sacts, va):
   else:
     actions = sacts.split()
   parser_actions = [AMRAction.from_oracle(x, va) for x in actions]
-  return [i.index for i in parser_actions]
+  return parser_actions
 
 WORD_DIM = 64
 LSTM_DIM = 64
@@ -134,6 +150,7 @@ class TransitionParser:
       # compute probability of each of the actions and choose an action
       # either from the oracle or if there is no oracle, based on the model
       action = valid_actions[0]
+      label = None
       log_probs = None
       if len(valid_actions) > 1:
         buffer_embedding = buffer[-1][0] if buffer else empty_buffer_emb
@@ -146,16 +163,18 @@ class TransitionParser:
           print('no oracle!')
           action = max(enumerate(log_probs.vec_value()), key=itemgetter(1))[0]
       if oracle_actions is not None:
-        action = oracle_actions.pop()
+        oracle_action = oracle_actions.pop()
+        action = oracle_action.index
+        label = oracle_action.label
         if log_probs is not None:
-          # append the action-specific loss
+          # append the action-specific loss based on oracle
           losses.append(dy.pick(log_probs, action))
       # execute the action to update the parser state
       if action == SH:
         _, tok_embedding, token = buffer.pop()
         stack_state, _ = stack[-1] if stack else (stack_top, '<TOP>')
         stack_state = stack_state.add_input(tok_embedding)
-        stack.append((stack_state, token))
+        stack.append((stack_state, Node(label, token)))
       elif action == DN:
         stack.pop()
       else: # one of the reduce actions
@@ -163,20 +182,22 @@ class TransitionParser:
         left = stack.pop()
         head, modifier = (left, right) if action == RR else (right, left)
         top_stack_state, _ = stack[-1] if stack else (stack_top, '<TOP>')
-        head_rep, head_tok = head[0].output(), head[1]
-        mod_rep, mod_tok = modifier[0].output(), modifier[1]
+        head_rep, head_node = head[0].output(), head[1]
+        mod_rep, mod_node = modifier[0].output(), modifier[1]
         composed_rep = dy.rectify(W_comp * dy.concatenate([head_rep, mod_rep]) + b_comp)
         top_stack_state = top_stack_state.add_input(composed_rep)
-        stack.append((top_stack_state, head_tok))
+        head_node.add_child(mod_node, label)
+        stack.append((top_stack_state, head_node))
         if oracle_actions is None:
-          print('{0} --> {1}'.format(head_tok, mod_tok))
+          print('{0} --> {1}'.format(head_node.token, mod_node.token))
 
     # the head of the tree that remains at the top of the stack is now the root
+    head = stack.pop()[1]
     if oracle_actions is None:
-      head = stack.pop()[1]
       print('ROOT --> {0}'.format(head))
     # print("losses" + str(map(lambda x: x.scalar_value(), losses)))
-    return -dy.esum(losses) if losses else None
+    # print(head.preety_print())
+    return (-dy.esum(losses) if losses else None, head)
 
 acts = ['SH', 'RL', 'RR', 'DN']
 vocab_acts = Vocab.from_list(acts)
@@ -199,7 +220,7 @@ for epoch in range(100):
   words = 0
   total_loss = 0.0
   for (s,a) in train:
-    loss = tp.parse(s, a)
+    loss = tp.parse(s, a)[0]
     words += len(s)
     if loss is not None:
       total_loss += loss.scalar_value()
@@ -214,7 +235,7 @@ for epoch in range(100):
   dev_words = 0
   dev_loss = 0.0
   for (ds, da) in dev:
-    loss = tp.parse(ds, da)
+    loss = tp.parse(ds, da)[0]
     dev_words += len(ds)
     if loss is not None:
       # print("loss" + str(loss) + "scalar" + str(loss.scalar_value()))

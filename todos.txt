@@ -16,5 +16,7 @@ Todo list
 --- can be handled by attaching the label to the predicted action
 -- delete from stack
 -- compound words?
+-- (done) Relation on operation to be attached on Node ?
+-- (done) what node structure to use?
 
 The boy desire-01 to be believed by the girl ||| SHIFT DELETE SHIFT(?discover"sense") SHIFT REDUCE_L(label) SHIFT DELETE SHIFT DELETE SHIFT SHIFT DELETE SHIFT DELETE SHIFT REDUCE_R REDUCE_R
