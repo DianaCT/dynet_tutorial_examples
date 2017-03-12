@@ -222,32 +222,23 @@ trainer = dy.AdamTrainer(model)
 tp = TransitionParser(model, vocab_words)
 
 #cmake .. -DEIGEN3_INCLUDE_DIR=/Users/flo/Documents/Doctorat/AMR/dynet-base/eigen -DBOOST_ROOT=/usr/local/opt/boost160/ -DPYTHON=/usr/bin/python
-i = 0
 min_loss = 100
 rounds = 0
 min_epoch = 0
 for epoch in range(100):
-  words = 0
-  total_loss = 0.0
   for (s,a) in train:
     loss = tp.parse(s, a)[0]
-    words += len(s)
     if loss is not None:
-      total_loss += loss.scalar_value()
+      # for some weird reason backward throws an failed assertion if there is no scalar value retrievall
+      loss.scalar_value()
       loss.backward()
       trainer.update()
-    if i % 50 == 0:
-      # print('epoch {}: per-word loss: {}'.format(e, total_loss / words))
-      words = 0
-      total_loss = 0.0
-    i += 1
   dev_words = 0
   dev_loss = 0.0
   for (ds, da) in dev:
     loss = tp.parse(ds, da)[0]
     dev_words += len(ds)
     if loss is not None:
-      # print("loss" + str(loss) + "scalar" + str(loss.scalar_value()))
       dev_loss += loss.scalar_value()
   loss_dev_words = dev_loss / dev_words
   print('[validation] epoch {}: per-word loss: {}'.format(epoch, loss_dev_words))
